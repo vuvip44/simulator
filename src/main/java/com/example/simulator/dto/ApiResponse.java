@@ -6,12 +6,22 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class ApiResponse<T> {
     private int status;
     private String message;
     private T data;
 
-    public ApiResponse(int i, String error) {
+
+    public ApiResponse(int status, String message) {
+        this.status = status;
+        this.message = message;
+        this.data = null;
+    }
+
+    public ApiResponse(int status, String message,T data) {
+        this.status = status;
+        this.message = message;
+        this.data = data;
     }
 }

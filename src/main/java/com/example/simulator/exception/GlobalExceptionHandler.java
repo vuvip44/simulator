@@ -18,31 +18,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SImRuntime.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiResponse<?> handleSimulatedRunTimeException(SImRuntime ex) {
-        return new ApiResponse<>(500, ex.getMessage(), null);
+        return new ApiResponse<>(500, ex.getMessage());
     }
 
     @ExceptionHandler(SimFile.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiResponse<?> handleSimulatedFileException(SimFile ex) {
-        return new ApiResponse<>(500, ex.getMessage(), null);
+        return new ApiResponse<>(500, ex.getMessage());
     }
 
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Object>> validationError(MethodArgumentNotValidException ex){
-        BindingResult result=ex.getBindingResult();
-        final List<FieldError> fieldErrors=result.getFieldErrors();
-
-        ApiResponse<Object> res=new ApiResponse<>();
-        res.setStatus(HttpStatus.BAD_REQUEST.value());
-        res.setMessage(ex.getBody().getDetail());
-
-        List<String> errors= new ArrayList<>();
-        for(FieldError f:fieldErrors){
-            errors.add(f.getDefaultMessage());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse<?> handleValidationException(MethodArgumentNotValidException ex) {
+        BindingResult result = ex.getBindingResult();
+        List<String> errors = new ArrayList<>();
+        for (FieldError error : result.getFieldErrors()) {
+            errors.add(error.getField() + ": " + error.getDefaultMessage());
         }
-
-        
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        return new ApiResponse<>(400, "Validation failed: " + String.join(", ", errors));
     }
-
 }

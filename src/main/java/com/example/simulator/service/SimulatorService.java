@@ -7,6 +7,7 @@ import com.example.simulator.model.Test;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
 @Service
@@ -31,9 +32,15 @@ public class SimulatorService {
         return new ApiResponse<>(200,"Ok",test);
     }
 
-    public ApiResponse<String> timeout()throws InterruptedException{
-        Thread.sleep(10000);
-        return new ApiResponse<>(504,"Timeout");
+    public CompletableFuture<ApiResponse<String>> timeout() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(10000);
+                return new ApiResponse<>(504, "Timeout");
+            } catch (InterruptedException e) {
+                throw new SImRuntime("Timeout interrupted");
+            }
+        });
     }
 
     public ApiResponse error(){
