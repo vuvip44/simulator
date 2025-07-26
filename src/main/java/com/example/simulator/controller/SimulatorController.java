@@ -3,6 +3,7 @@ package com.example.simulator.controller;
 import com.example.simulator.dto.ApiResponse;
 import com.example.simulator.model.Test;
 import com.example.simulator.service.SimulatorService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +16,9 @@ public class SimulatorController {
     @Autowired
     private SimulatorService service;
 
+    //Exceptor invalid
     @PostMapping("/success")
-    public ApiResponse<Test> success(@RequestBody Test test) {
+    public ApiResponse<Test> success(@RequestBody @Valid Test test) {
         return service.getTest(test);
     }
 
